@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>awak8n store.</title>
+    <link rel="stylesheet" href="style/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Сброс отступов и базовые стили */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .page-container {
+            background: rgba(255, 255, 255, 0.95);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem 2rem;
+            text-align: center;
+            width: 100%;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            margin: 0;
+            font-weight: bold;
+        }
+        
+        /* Тематический переключатель */
+        .theme-switcher {
+            position: absolute;
+            top: 1rem;
+            right: 2rem;
+        }
+        
+        .theme-switcher__button {
+            background: white;
+            color: #2c3e50;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            padding: 8px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-switcher__button:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+            transform: translateY(-2px);
+        }
+        
+        .nav {
+            background: #34495e;
+            padding: 1rem 0;
+            width: 100%;
+        }
+        
+        .nav-list {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-link {
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background: #3498db;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .content {
+            padding: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e9ecef;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .profile-header > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .profile-photo {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 5px solid white;
+            margin: 1rem auto;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            object-fit: cover;
+        }
+        
+        .profile-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .profile-name {
+            font-size: 2rem;
+            margin: 1rem 0;
+            color: white;
+        }
+        
+        .profile-group {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            color: white;
+        }
+        
+        .section-title {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+        
+        .about-me {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .about-me .section-title {
+            color: white;
+            border-bottom-color: white;
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .skill-tag {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 500;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .skill-tag:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        .experience-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+        
+        .experience-card {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border: none;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .experience-card:hover {
+            transform: rotate(-2deg) scale(1.02);
+        }
+        
+        .experience-title {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+        
+        .experience-desc {
+            color: #34495e;
+            line-height: 1.6;
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            font-size: 1.1rem;
+            width: 100%;
+            margin-top: auto;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        /* Анимации */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .card:nth-child(2) { animation-delay: 0.1s; }
+        .card:nth-child(3) { animation-delay: 0.2s; }
+        .card:nth-child(4) { animation-delay: 0.3s; }
+
+        /* Адаптивность для мобильных устройств */
+        @media (max-width: 768px) {
+            .theme-switcher {
+                position: static;
+                margin-top: 1rem;
+            }
+            
+            .nav-list {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: center;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .profile-title {
+                font-size: 2rem;
+            }
+            
+            .profile-name {
+                font-size: 1.5rem;
+            }
+            
+            .profile-photo {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .experience-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* CSS переменные для темной темы */
+        [data-theme="dark"] {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --text-primary: #f8f9fa;
+            --text-secondary: #ced4da;
+            --accent-color: #5a6fed;
+            --border-color: #495057;
+        }
+        
+        [data-theme="dark"] .page-container {
+            background: #121212;
+        }
+        
+        [data-theme="dark"] .card {
+            background: #2d2d2d;
+            border-color: #495057;
+            color: var(--text-primary);
+        }
+        
+        [data-theme="dark"] .section-title {
+            color: var(--text-primary);
+            border-bottom-color: var(--accent-color);
+        }
+        
+        [data-theme="dark"] .experience-title {
+            color: var(--text-primary);
+        }
+        
+        [data-theme="dark"] .experience-desc {
+            color: var(--text-secondary);
+        }
+        
+        [data-theme="dark"] .theme-switcher__button {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border-color: var(--border-color);
+        }
+        
+        [data-theme="dark"] .theme-switcher__button:hover {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <header class="header">
+            <h1>Магазин фруктов</h1>
+            <div class="theme-switcher">
+                <button class="theme-switcher__button" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                    <span>Темная тема</span>
+                </button>
+            </div>
+        </header>
+        
+        <nav class="nav">
+            <ul class="nav-list">
+                <li class="nav-item"><a class="nav-link active" href="index.html">Главная</a></li>
+                <li class="nav-item"><a class="nav-link" href="pages/news.html">Новости</a></li>
+                <li class="nav-item"><a class="nav-link" href="pages/practices.html">Практики</a></li>
+                <li class="nav-item"><a class="nav-link" href="pages/goods.html">Товары</a></li>
+                <li class="nav-item"><a class="nav-link" href="pages/contacts.html">Контакты</a></li>
+            </ul>
+        </nav>
+        
+        <main class="content">
+            <article class="profile-header card text-center">
+                <h1 class="profile-title page-title">Информация об авторе</h1>
+                <img class="profile-photo" src="images/photo.png" alt="Фото автора">
+                <h2 class="profile-name">Левашев Егор Вячеславович</h2>
+                <p class="profile-group">ЭФБО-13-24</p>
+            </article>
+            
+            <section class="about-me card">
+                <h2 class="section-title">Обо мне</h2>
+                <p>Я живу в Москве, учусь в РТУ МИРЭА. Стремлюсь к постоянному развитию и достижению поставленных целей.</p>
+            </section>
+            
+            <section class="skills-container card">
+                <h2 class="section-title">Мои навыки</h2>
+                <div class="skills-grid">
+                    <div class="skill-tag">Тайм-менеджмент<br>Умею распределить время</div>
+                    <div class="skill-tag">Критическое мышление<br>Я умею разбивать проблему на части</div>
+                    <div class="skill-tag">Хорошо играю в футбол<br>Занимался футболом в школе</div>
+                    <div class="skill-tag">Умею собирать ПК<br>Я сам собираю себе и не только себе ПК</div>
+                </div>
+            </section>
+            
+            <section class="experience-section">
+                <h2 class="section-title">Мой опыт работы</h2>
+                <div class="experience-grid">
+                    <article class="experience-card card">
+                        <h3 class="experience-title">Собирал ПК</h3>
+                        <p class="experience-desc">Подбирал комплектующие, потом собирал ПК на заказ. Опыт работы с клиентами и техническими решениями.</p>
+                    </article>
+                    
+                    <article class="experience-card card">
+                        <h3 class="experience-title">Стример</h3>
+                        <p class="experience-desc">Стримил на твиче разное, даже заработал немного. Развил коммуникативные навыки и умение работать с аудиторией.</p>
+                    </article>
+                    
+                    <article class="experience-card card">
+                        <h3 class="experience-title">Ген. директор</h3>
+                        <p class="experience-desc">Был ген. директором. Приобрел опыт управления и организации рабочего процесса.</p>
+                    </article>
+                </div>
+            </section>
+        </main>
+        
+        <footer class="footer">
+            <p>&copy; 2025 awak8n store. Все права защищены.</p>
+            <p class="theme-info">Текущая тема: <span id="currentTheme">Светлая</span></p>
+        </footer>
+    </div>
+
+    <script>
+        // Тематический переключатель
+        const themeToggle = document.getElementById('themeToggle');
+        const currentThemeElement = document.getElementById('currentTheme');
+        const html = document.documentElement;
+
+        // Проверяем сохраненную тему
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', savedTheme);
+        updateThemeButton(savedTheme);
+
+        // Обработчик клика
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeButton(newTheme);
+        });
+
+        function updateThemeButton(theme) {
+            const icon = themeToggle.querySelector('i');
+            const text = themeToggle.querySelector('span');
+            
+            if (theme === 'dark') {
+                icon.className = 'fas fa-sun';
+                text.textContent = 'Светлая тема';
+                if (currentThemeElement) {
+                    currentThemeElement.textContent = 'Темная';
+                }
+            } else {
+                icon.className = 'fas fa-moon';
+                text.textContent = 'Темная тема';
+                if (currentThemeElement) {
+                    currentThemeElement.textContent = 'Светлая';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

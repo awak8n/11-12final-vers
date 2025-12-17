@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Товары</title>
+    <link rel="stylesheet" href="../style/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== БАЗОВЫЕ СТИЛИ ===== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        /* ===== КОНТЕЙНЕР СТРАНИЦЫ ===== */
+        .page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+        }
+        
+        /* ===== ШАПКА ===== */
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            text-align: center;
+            padding: 30px;
+            font-size: 28px;
+            font-weight: 300;
+            position: relative;
+        }
+        
+        /* Тематический переключатель */
+        .theme-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        
+        .theme-switcher__button {
+            background: white;
+            color: #2c3e50;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            padding: 8px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-switcher__button:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+            transform: translateY(-2px);
+        }
+        
+        /* ===== НАВИГАЦИЯ ===== */
+        .nav {
+            background: #2c3e50;
+            padding: 20px 0;
+        }
+        
+        .nav-list {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+        }
+        
+        /* ===== ОСНОВНОЙ КОНТЕНТ ===== */
+        .content {
+            padding: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .page-title {
+            font-size: 32px;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        /* ===== КАРТОЧКИ ===== */
+        .card {
+            background: white;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-left: 4px solid #667eea;
+        }
+        
+        /* ===== КНОПКИ ===== */
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* ===== КАРТОЧКИ ТОВАРОВ (БЭМ) ===== */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+        
+        /* Блок карточки */
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            border: 1px solid #e9ecef;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Элементы карточки */
+        .product-card__badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #e74c3c;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 2;
+        }
+        
+        .product-card__badge--hit {
+            background: #e74c3c;
+        }
+        
+        .product-card__badge--new {
+            background: #9b59b6;
+        }
+        
+        .product-card__favorite {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.3s ease;
+            z-index: 2;
+            border: none;
+            font-size: 1.1rem;
+        }
+        
+        .product-card__image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .product-card__content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .product-card__title {
+            color: #2c3e50;
+            margin: 0 0 10px 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .product-card__description {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-size: 14px;
+            flex-grow: 1;
+        }
+        
+        .product-card__price {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .product-card__current-price {
+            color: #e74c3c;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        
+        .product-card__old-price {
+            color: #95a5a6;
+            text-decoration: line-through;
+            font-size: 16px;
+        }
+        
+        .product-card__meta {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        
+        .product-card__rating {
+            color: #f39c12;
+        }
+        
+        .product-card__stock {
+            color: #27ae60;
+        }
+        
+        .product-card__stock--low {
+            color: #e74c3c;
+        }
+        
+        .product-card__button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-size: 16px;
+            margin-top: auto;
+        }
+        
+        /* Модификаторы карточки */
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .product-card--selected {
+            border: 2px solid #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .product-card--selected .product-card__button {
+            background: #27ae60;
+        }
+        
+        .product-card__favorite--active {
+            color: #e74c3c;
+        }
+        
+        .product-card__favorite:hover {
+            background: white;
+            color: #e74c3c;
+            transform: scale(1.1);
+        }
+        
+        .product-card__button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* ===== ФИЛЬТРЫ ===== */
+        .goods-filters {
+            margin-bottom: 30px;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        /* ===== ФУТЕР ===== */
+        .footer {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+        
+        .theme-info {
+            margin-top: 10px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        /* ===== ТЕМНАЯ ТЕМА ===== */
+        [data-theme="dark"] .page-container {
+            background: #121212;
+        }
+        
+        [data-theme="dark"] .card,
+        [data-theme="dark"] .product-card {
+            background: #2d2d2d;
+            border-color: #495057;
+            color: #f8f9fa;
+        }
+        
+        [data-theme="dark"] .product-card__title {
+            color: #f8f9fa;
+        }
+        
+        [data-theme="dark"] .product-card__description {
+            color: #ced4da;
+        }
+        
+        [data-theme="dark"] .theme-switcher__button {
+            background: #2d2d2d;
+            color: #f8f9fa;
+            border-color: #495057;
+        }
+        
+        [data-theme="dark"] .theme-switcher__button:hover {
+            background: #5a6fed;
+            border-color: #5a6fed;
+        }
+        
+        /* ===== АДАПТИВНОСТЬ ===== */
+        @media (max-width: 768px) {
+            .theme-switcher {
+                position: static;
+                margin-top: 15px;
+            }
+            
+            .nav-list {
+                flex-direction: column;
+                gap: 10px;
+                padding: 0 20px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-buttons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <header class="header">
+            <h1>Магазин фруктов</h1>
+            <div class="theme-switcher">
+                <button class="theme-switcher__button" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                    <span>Темная тема</span>
+                </button>
+            </div>
+        </header>
+        
+        <nav class="nav">
+            <ul class="nav-list">
+                <li class="nav-item"><a class="nav-link" href="../index.html">Главная</a></li>
+                <li class="nav-item"><a class="nav-link" href="news.html">Новости</a></li>
+                <li class="nav-item"><a class="nav-link" href="practices.html">Практики</a></li>
+                <li class="nav-item"><a class="nav-link active" href="goods.html">Товары</a></li>
+                <li class="nav-item"><a class="nav-link" href="contacts.html">Контакты</a></li>
+            </ul>
+        </nav>
+        
+        <main class="content">
+            <h1 class="page-title">Наши товары</h1>
+            
+            <div class="goods-filters card">
+                <h3>Фильтры</h3>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">Все товары</button>
+                    <button class="filter-btn" data-filter="hit">Хит продаж</button>
+                    <button class="filter-btn" data-filter="new">Новинки</button>
+                    <button class="filter-btn" data-filter="selected">В корзине</button>
+                </div>
+            </div>
+            
+            <div class="cards-grid">
+                <article class="product-card product-card--discount" data-id="1">
+                    <div class="product-card__badge product-card__badge--hit">🔥 Хит продаж</div>
+                    <button class="product-card__favorite" data-id="1">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    <img src="../images/goods1.jpg" alt="Сочный арбуз" class="product-card__image">
+                    <div class="product-card__content">
+                        <h3 class="product-card__title">Арбуз</h3>
+                        <p class="product-card__description">Сочный и сладкий, идеально подходит для летнего стола</p>
+                        <div class="product-card__price">
+                            <span class="product-card__current-price">3 000 ₽</span>
+                            <span class="product-card__old-price">3 500 ₽</span>
+                        </div>
+                        <div class="product-card__meta">
+                            <span class="product-card__rating">⭐ 4.8</span>
+                            <span class="product-card__stock">В наличии</span>
+                        </div>
+                        <button class="product-card__button" data-id="1">Добавить в корзину</button>
+                    </div>
+                </article>
+
+                <article class="product-card" data-id="2">
+                    <div class="product-card__badge product-card__badge--hit">🔥 Хит продаж</div>
+                    <button class="product-card__favorite product-card__favorite--active" data-id="2">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <img src="../images/goods2.jpg" alt="Спелая дыня" class="product-card__image">
+                    <div class="product-card__content">
+                        <h3 class="product-card__title">Дыня</h3>
+                        <p class="product-card__description">Ароматная с нежной мякотью, отборный сорт</p>
+                        <div class="product-card__price">
+                            <span class="product-card__current-price">2 000 ₽</span>
+                        </div>
+                        <div class="product-card__meta">
+                            <span class="product-card__rating">⭐ 4.6</span>
+                            <span class="product-card__stock">В наличии</span>
+                        </div>
+                        <button class="product-card__button" data-id="2">Добавить в корзину</button>
+                    </div>
+                </article>
+
+                <article class="product-card product-card--selected" data-id="3">
+                    <button class="product-card__favorite" data-id="3">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    <img src="../images/goods3.jpg" alt="Свежие бананы" class="product-card__image">
+                    <div class="product-card__content">
+                        <h3 class="product-card__title">Бананы</h3>
+                        <p class="product-card__description">Спелые, вкусные, идеальны для перекуса</p>
+                        <div class="product-card__price">
+                            <span class="product-card__current-price">750 ₽</span>
+                        </div>
+                        <div class="product-card__meta">
+                            <span class="product-card__rating">⭐ 4.9</span>
+                            <span class="product-card__stock product-card__stock--low">Осталось: 1 шт.</span>
+                        </div>
+                        <button class="product-card__button" data-id="3">В корзине</button>
+                    </div>
+                </article>
+
+                <article class="product-card product-card--discount" data-id="4">
+                    <div class="product-card__badge product-card__badge--new">Новинка</div>
+                    <button class="product-card__favorite" data-id="4">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    <img src="../images/goods4.jpg" alt="Свежая клубника" class="product-card__image">
+                    <div class="product-card__content">
+                        <h3 class="product-card__title">Клубника</h3>
+                        <p class="product-card__description">Свежая, вкусная, собранная вручную</p>
+                        <div class="product-card__price">
+                            <span class="product-card__current-price">1 200 ₽</span>
+                            <span class="product-card__old-price">1 500 ₽</span>
+                        </div>
+                        <div class="product-card__meta">
+                            <span class="product-card__rating">⭐ 5.0</span>
+                            <span class="product-card__stock">В наличии</span>
+                        </div>
+                        <button class="product-card__button" data-id="4">Добавить в корзину</button>
+                    </div>
+                </article>
+            </div>
+        </main>
+        
+        <footer class="footer">
+            <p>&copy; 2025 awak8n store. Все права защищены.</p>
+            <p class="theme-info">Текущая тема: <span id="currentTheme">Светлая</span></p>
+        </footer>
+    </div>
+
+    <script>
+        // Тематический переключатель
+        const themeToggle = document.getElementById('themeToggle');
+        const currentThemeElement = document.getElementById('currentTheme');
+        const html = document.documentElement;
+
+        // Проверяем сохраненную тему
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', savedTheme);
+        updateThemeButton(savedTheme);
+
+        // Обработчик клика
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeButton(newTheme);
+        });
+
+        function updateThemeButton(theme) {
+            const icon = themeToggle.querySelector('i');
+            const text = themeToggle.querySelector('span');
+            
+            if (theme === 'dark') {
+                icon.className = 'fas fa-sun';
+                text.textContent = 'Светлая тема';
+                if (currentThemeElement) {
+                    currentThemeElement.textContent = 'Темная';
+                }
+            } else {
+                icon.className = 'fas fa-moon';
+                text.textContent = 'Темная тема';
+                if (currentThemeElement) {
+                    currentThemeElement.textContent = 'Светлая';
+                }
+            }
+        }
+        
+        // Логика карточек товаров
+        document.addEventListener('DOMContentLoaded', function() {
+            // Кнопки добавления в корзину
+            document.querySelectorAll('.product-card__button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const card = this.closest('.product-card');
+                    const isSelected = card.classList.contains('product-card--selected');
+                    
+                    if (isSelected) {
+                        card.classList.remove('product-card--selected');
+                        this.textContent = 'Добавить в корзину';
+                    } else {
+                        card.classList.add('product-card--selected');
+                        this.textContent = 'В корзине';
+                    }
+                    
+                    // Анимация клика
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+            
+            // Кнопки избранного
+            document.querySelectorAll('.product-card__favorite').forEach(button => {
+                button.addEventListener('click', function() {
+                    const icon = this.querySelector('i');
+                    const isActive = this.classList.contains('product-card__favorite--active');
+                    
+                    if (isActive) {
+                        this.classList.remove('product-card__favorite--active');
+                        icon.className = 'far fa-heart';
+                    } else {
+                        this.classList.add('product-card__favorite--active');
+                        icon.className = 'fas fa-heart';
+                    }
+                    
+                    // Анимация
+                    this.style.transform = 'scale(1.3)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 200);
+                });
+            });
+            
+            // Фильтры
+            document.querySelectorAll('.filter-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    // Убираем активный класс со всех кнопок
+                    document.querySelectorAll('.filter-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    // Добавляем активный класс текущей кнопке
+                    this.classList.add('active');
+                    
+                    // Фильтрация карточек
+                    const filter = this.getAttribute('data-filter');
+                    filterProductCards(filter);
+                });
+            });
+            
+            function filterProductCards(filter) {
+                const cards = document.querySelectorAll('.product-card');
+                cards.forEach(card => {
+                    const hasHit = card.querySelector('.product-card__badge--hit');
+                    const hasNew = card.querySelector('.product-card__badge--new');
+                    const isSelected = card.classList.contains('product-card--selected');
+                    
+                    let showCard = false;
+                    
+                    switch(filter) {
+                        case 'all':
+                            showCard = true;
+                            break;
+                        case 'hit':
+                            showCard = hasHit !== null;
+                            break;
+                        case 'new':
+                            showCard = hasNew !== null;
+                            break;
+                        case 'selected':
+                            showCard = isSelected;
+                            break;
+                    }
+                    
+                    if (showCard) {
+                        card.style.display = 'flex';
+                        setTimeout(() => {
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        }, 10);
+                    } else {
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(20px)';
+                        setTimeout(() => {
+                            card.style.display = 'none';
+                        }, 300);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
